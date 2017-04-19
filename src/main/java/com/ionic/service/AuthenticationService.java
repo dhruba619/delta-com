@@ -58,16 +58,30 @@ public class AuthenticationService {
      */
     public Authentication getAuthentication(HttpServletRequest request) {
         String tokenString = request.getHeader(HEADER_STRING);
-        Token token = tokenRepository.findOne(tokenString.replace(TOKEN_PREFIX, ""));
-        if (token != null) {
-            String user = Jwts.parser()
-                .setSigningKey(token.getTokenSecret())
-                .parseClaimsJws(tokenString.replace(TOKEN_PREFIX, ""))
-                .getBody()
-                .getSubject();
+        if (null != tokenString) {
+            Token token = tokenRepository.findOne(tokenString.replace(TOKEN_PREFIX, ""));
+            if (null != token) {
+                String user = Jwts.parser()
+                    .setSigningKey(token.getTokenSecret())
+                    .parseClaimsJws(tokenString.replace(TOKEN_PREFIX, ""))
+                    .getBody()
+                    .getSubject();
 
-            return user != null ? new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList()) : null;
+                return user != null ? new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList()) : null;
+            }
         }
         return null;
+    }
+    
+    
+    /**
+     * 
+     * @param request
+     * @return
+     */
+    public boolean removeAuthentication(HttpServletRequest request){
+        tokenRepository.delete(request.getHeader(HEADER_STRING));
+        return true;
+        
     }
 }

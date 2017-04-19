@@ -26,6 +26,7 @@ public class AccessControllerDelegate {
         // depending on how frontend sends the password.
         validateCustomer(customer);
         customerRepository.save(customer);
+        sendActivationEmail(customer.getEmail());
     }
 
 
@@ -52,5 +53,13 @@ public class AccessControllerDelegate {
         if (null != customerRepository.findByEmail(customer.getEmail())) {
             throw new Exception("Customer exists with given email");
         }
+    }
+    
+    /**
+     * 
+     * @param email
+     */
+    private void sendActivationEmail(String email){
+        //TODO implement email integration
     }
 }

@@ -1,5 +1,6 @@
 package com.ionic.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ionic.delegate.AccessControllerDelegate;
 import com.ionic.model.Customer;
 import com.ionic.model.Token;
+import com.ionic.service.AuthenticationService;
 
 @RestController
 @RequestMapping("api/v1.0")
@@ -24,6 +26,9 @@ public class AccessController {
 
     @Autowired
     AccessControllerDelegate accessControllerDelegate;
+    
+    @Autowired
+    AuthenticationService authenticationService;
 
     /**
      * API to handle customer registration, returns the registered customer object.
@@ -43,7 +48,17 @@ public class AccessController {
             LOGGER.error("Failed for: " + e.getMessage());
             throw e;
         }
-
+    }
+       
+    /**
+     * 
+     * @param request
+     * @return
+     */
+    @RequestMapping(path = "logout", method = RequestMethod.POST, produces = { MediaType.APPLICATION_JSON_VALUE })
+    public boolean logout(HttpServletRequest request){
+        return authenticationService.removeAuthentication((HttpServletRequest) request);
+      
     }
 
 }
